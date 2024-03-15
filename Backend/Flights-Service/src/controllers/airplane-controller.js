@@ -21,6 +21,78 @@ async function createAirplane(req, res) {
   }
 }
 
+async function getAirplanes(req, res) {
+  try {
+    const airplanes = await AirplaneService.getAirplanes();
+    SuccessResponse.data = airplanes;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
+/*
+method: GET request 
+URL: /airplanes/:id
+data: req.body: {id}
+*/
+
+async function getAirplane(req, res) {
+  try {
+    /*
+    The req.params property is an object containing 
+    properties mapped to the named route “parameters”.
+    For example, if you have the route /airplanes/:id, 
+    then the “id” property is available as req.params.id. 
+    */
+    const airplanes = await AirplaneService.getAirplane(req.params.id);
+    SuccessResponse.data = airplanes;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
+/*
+method: DELETE request 
+URL: /airplanes/:id
+data: req.body: {id}
+*/
+async function destroyAirplane(req, res) {
+  try {
+    const airplanes = await AirplaneService.destroyAirplane(req.params.id);
+    SuccessResponse.data = airplanes;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+/*
+method: PATCH request 
+URL: /airplanes/:id
+data: req.body: {id,{data}}
+*/
+async function updateAirplane(req, res) {
+  try {
+    const airplanes = await AirplaneService.updateAirplane(
+      req.params.id,
+      req.body
+    );
+    SuccessResponse.data = airplanes;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+}
+
 module.exports = {
   createAirplane,
+  getAirplanes,
+  getAirplane,
+  destroyAirplane,
+  updateAirplane,
 };

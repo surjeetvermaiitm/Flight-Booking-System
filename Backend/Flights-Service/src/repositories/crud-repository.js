@@ -10,64 +10,85 @@ Follow this Documentation :
 - https://sequelize.org/docs/v6/core-concepts/model-querying-finders/
 */
 
+/*
+We have removed the try-catch block from here because now we will handle logical errors inside the airplane-service file.
+*/
+const { StatusCodes } = require("http-status-codes");
 const { Logger } = require("../config");
+const AppError = require("../utils/errors/app-error");
+
 class CrudRepository {
   constructor(model) {
     this.model = model;
   }
+
   async create(data) {
-    const response = await this.model.create(data); // insert data query
+    const response = await this.model.create(data);
     return response;
   }
+
   async destroy(data) {
-    try {
-      const response = await this.model.destroy({
-        where: {
-          id: data,
-        },
-      }); // delete data query based on id.
-      return response;
-    } catch (error) {
-      Logger.error(
-        "Something went wrong in the CRUD Repo : destroy() function"
+    const response = await this.model.destroy({
+      where: {
+        id: data,
+      },
+    });
+    // We will throw an error if we are unable to find a response
+    if (!response) {
+      throw new AppError(
+        "The data for the given ID could not be found",
+        StatusCodes.NOT_FOUND
       );
-      throw error; // catch the error in the service layer and manipulate this error more logically and create more custom error objects.
     }
+    return response;
   }
+
   async get(data) {
-    try {
-      const response = await this.model.findByPk(data); // find data query based on Primary Key
-      return response;
-    } catch (error) {
-      Logger.error("Something went wrong in the CRUD Repo : get() function");
-      throw error; // catch the error in the service layer and manipulate this error more logically and create more custom error objects.
+    const response = await this.model.findByPk(data);
+    // We will throw an error if we are unable to find a response
+    if (!response) {
+      throw new AppError(
+        "The data for the given ID could not be found",
+        StatusCodes.NOT_FOUND
+      );
     }
+    return response;
   }
+
   async getAll() {
-    try {
-      const response = await this.model.findAll(); // find all the data query
-      return response;
-    } catch (error) {
-      Logger.error("Something went wrong in the CRUD Repo : getAll() function");
-      throw error; // catch the error in the service layer and manipulate this error more logically and create more custom error objects.
-    }
+    const response = await this.model.findAll();
+    return response;
   }
+
   async update(id, data) {
-    // data -> {col: value, ....}, data should be an object over here.
-    try {
+    const tableAttributes = Object.keys(this.model.rawAttributes);
+    const reqAttributes = Object.keys(data);
+    const hasAllAttributes = reqAttributes.every((elem) =>
+      tableAttributes.includes(elem)
+    );
+    if (hasAllAttributes) {
       const response = await this.model.update(data, {
-        // update data query based on id
         where: {
           id: id,
         },
       });
+
+      if (response[0] == 0) {
+        throw new AppError(
+          "The data for the given ID could not be found",
+          StatusCodes.NOT_FOUND
+        );
+      }
       return response;
-    } catch (error) {
-      Logger.error("Something went wrong in the CRUD Repo : update() function");
-      throw error; // catch the error in the service layer and manipulate this error more logically and create more custom error objects.
+    } else {
+      throw new AppError(
+        "The column for the given ID could not be found",
+        StatusCodes.NOT_FOUND
+      );
     }
   }
 }
+
 module.exports = CrudRepository;
 
 /* 
