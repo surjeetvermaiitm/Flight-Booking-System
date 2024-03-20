@@ -208,3 +208,21 @@ $ npx sequelize db:migrate:undo
 
 $ npx sequelize db:migrate
 ```
+
+Airplane
+
+>npx sequelize  model:generate --name Airplane --attributes modelNumber:string,capacity:integer
+
+>npx sequelize db:migrate
+
+city
+
+> npx sequelize model:generate --name City --attributes name:string
+
+> npx sequelize db:migrate
+
+Airport
+
+> npx sequelize model:generate --name Airport --attributes name:string,code:string,address:string,cityId:integer
+
+> npx sequelize db:migrate
