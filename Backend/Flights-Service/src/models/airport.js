@@ -14,7 +14,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      
+      this.belongsTo(models.City, {
+        foreignKey: "cityId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      }); // Airports belong to a City and Foreign Key is the cityId inside the airports table based on u say Airports belong to a City.
+      this.hasMany(models.Flight, {
+        // 1 Airport can have many Flights
+        foreignKey: "departureAirportId",
+        onDelete: "CASCADE",
+      });
+      this.hasMany(models.Flight, {
+        // 1 Airport can have many Flights
+        foreignKey: "arrivalAirportId",
+        onDelete: "CASCADE",
+      });
     }
   }
   Airport.init(

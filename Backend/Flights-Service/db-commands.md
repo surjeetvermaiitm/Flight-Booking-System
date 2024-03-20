@@ -226,3 +226,19 @@ Airport
 > npx sequelize model:generate --name Airport --attributes name:string,code:string,address:string,cityId:integer
 
 > npx sequelize db:migrate
+
+Foreign key constraint
+
+> npx sequelize migration:generate --name update-city-airport-associaltion
+
+> npx sequelize db:migrate
+
+>npx sequelize db:migrate:undo
+
+Flight
+
+> npx sequelize model:generate --name Flight --attributes flightNumber:string,airplaneId:integer,departureAirportId:string,arrivalAirportId:string,arrivalTime:date,departureTime:date,price:integer,boardingGate:string,totalSeats:integer
+
+
+
+
